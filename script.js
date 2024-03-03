@@ -22,7 +22,7 @@ Circle = {
 }
 
 function setup() {
-  createCanvas(575, 575);
+  createCanvas(windowWidth, windowHeight * 0.99);
   zoom = createSlider(50, 200, 100);
   zoom.position(120, 510);
   zoom.size(150);
@@ -48,12 +48,12 @@ function setup() {
   inputs.solver.option('Parabola intercepting with a line');
   inputs.solver.option('Circle intercepting with a line');
   inputs.solver.selected('Parabola intercepting with a line');
-  inputs.solver.position(350, 515)
+  inputs.solver.position(345, 508)
 }
 
 function draw() {
   background(225);
-  translate(x + 575 / 2, y + 250);
+  translate(x + windowWidth / 2, y + 250);
   scale(zoom.value() / 100);
   // draw grid lines
 
@@ -68,7 +68,7 @@ function draw() {
 
   Circle.h = inputs.circle.h.value();
   Circle.k = inputs.circle.k.value();
-  if (inputs.circle.r.value()>0){
+  if (inputs.circle.r.value() > 0) {
     Circle.r = inputs.circle.r.value();
   }
 
@@ -127,9 +127,9 @@ function draw() {
   // overlay UI
   scale(100 / zoom.value());
   strokeWeight(1);
-  translate(-x - 575 / 2, -y - 250);
+  translate(-x - windowWidth / 2, -y - 250);
   fill(175);
-  rect(0, 500, windowWidth, 75);
+  rect(0, 500, windowWidth, windowHeight);
   fill(0);
   textSize(15);
   textStyle(BOLD);
@@ -138,8 +138,8 @@ function draw() {
   //input fields
   if (inputs.solver.selected() != 'Roots of a parabola') {
     text("f(x) =              x  + ", 60, 540);
-    inputs.liner.m.position(110, 537);
-    inputs.liner.b.position(195, 537);
+    inputs.liner.m.position(100, 530);
+    inputs.liner.b.position(185, 530);
   } else {
     inputs.liner.m.position(0, -100);
     inputs.liner.b.position(0, -100);
@@ -147,9 +147,9 @@ function draw() {
 
   if (inputs.solver.selected() == 'Circle intercepting with a line') {
     text("c(x) = ( x -              )² +  (y -              )² =             ²", 60, 563);
-    inputs.circle.h.position(145, 560);
-    inputs.circle.k.position(255, 560);
-    inputs.circle.r.position(337, 560);
+    inputs.circle.h.position(140, 555);
+    inputs.circle.k.position(250, 555);
+    inputs.circle.r.position(330, 555);
   } else {
     inputs.circle.h.position(0, -100);
     inputs.circle.k.position(0, -100);
@@ -158,14 +158,14 @@ function draw() {
 
   if (inputs.solver.selected() == 'Parabola intercepting with a line') {
     text("g(x) =              x² +              x +", 57, 563);
-    inputs.quadratic.a.position(110, 560);
-    inputs.quadratic.b.position(195, 560);
-    inputs.quadratic.c.position(275, 560);
+    inputs.quadratic.a.position(100, 553);
+    inputs.quadratic.b.position(185, 553);
+    inputs.quadratic.c.position(265, 553);
   } else if (inputs.solver.selected() == 'Roots of a parabola') {
     text("g(x) =              x² +              x +", 57, 540);
-    inputs.quadratic.a.position(110, 537);
-    inputs.quadratic.b.position(195, 537);
-    inputs.quadratic.c.position(275, 537);
+    inputs.quadratic.a.position(100, 530);
+    inputs.quadratic.b.position(185, 530);
+    inputs.quadratic.c.position(265, 530);
   } else {
     inputs.quadratic.a.position(0, -100);
     inputs.quadratic.b.position(0, -100);
@@ -177,7 +177,7 @@ function draw() {
 }
 
 function mouseDragged() {
-  if (!(mouseX > 0 && mouseX < 575 && mouseY > 0 && mouseY < 500)) { draggable = false; }
+  if (!(mouseY > 0 && mouseY < 500)) { draggable = false; }
   if (draggable) {
     x += movedX;
     y += movedY;
