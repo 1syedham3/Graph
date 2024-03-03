@@ -104,4 +104,5 @@ function mouseDragged() {
 
 function mouseReleased() {
   draggable = true;
+  alert("hey");
 }
