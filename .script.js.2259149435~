@@ -1,0 +1,65 @@
+let x = 0;
+let y = 0;
+let slider;
+let draggable = true;
+
+liner = {
+  m: 1,
+  b: 0,
+}
+
+quadratic = {
+  a:1,
+  b
+}
+
+function setup() {
+  createCanvas(500, 525);
+  slider = createSlider(50, 200, 100);
+  slider.position(120, 510);
+  slider.size(150);
+}
+
+function draw() {
+  background(200);
+  translate(x + 250, y + 250);
+  scale(slider.value() / 100);
+  // draw grid lines
+  stroke(50);
+  for (let i = -100000; i < 100000; i = i + 25) {
+    line(i, 100000, i, -100000);
+    line(100000, i, -100000, i);
+  }
+
+  // line
+  stroke(0);
+  strokeWeight(5);
+  line(-100000,-(liner.m * -100000 + liner.b), 100000, -(liner.m * 100000 + liner.b));
+
+  // quadratic
+  // TODO
+
+
+  // overlay UI
+  strokeWeight(1);
+  scale(100 / slider.value());
+  translate(-x - 250, -y - 250);
+  fill(175);
+  rect(0, 500, 500, 25);
+  fill(0);
+  textSize(15);
+  textStyle(BOLD);
+  text("Zoom: " + slider.value() + "%", 10, 517);
+}
+
+function mouseDragged() {
+  if (!(mouseX > 0 && mouseX < 500 && mouseY > 0 && mouseY < 500)) { draggable = false; }
+  if (draggable) {
+    x += movedX;
+    y += movedY;
+  }
+}
+
+function mouseReleased() {
+  draggable = true;
+}
