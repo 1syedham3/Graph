@@ -68,7 +68,9 @@ function draw() {
 
   Circle.h = inputs.circle.h.value();
   Circle.k = inputs.circle.k.value();
-  Circle.r = inputs.circle.r.value();
+  if (inputs.circle.r.value()>0){
+    Circle.r = inputs.circle.r.value();
+  }
 
   let increment;
   if (zoom.value() < 75) { increment = 2; } else { increment = 1; }
