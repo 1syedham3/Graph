@@ -16,7 +16,7 @@ quadratic = {
 }
 
 function setup() {
-  createCanvas(500, 575);
+  createCanvas(575, 575);
   zoom = createSlider(50, 200, 100);
   zoom.position(120, 510);
   zoom.size(150);
@@ -30,38 +30,53 @@ function setup() {
       a: createInput("1", "number"),
       b: createInput("0", "number"),
       c: createInput("0", "number")
-    }
+    },
+    solver: createSelect()
   }
-  inputs.liner.m.position(85, 535);
+  inputs.solver.option('Roots of a parabola');
+  inputs.solver.option('Parabola intercepting with a line');
+  inputs.solver.option('circle intercepting with a line');
+  inputs.solver.selected('Parabola intercepting with a line');
+  inputs.solver.position(350, 515)
 }
 
 function draw() {
   background(225);
-  translate(x + 250, y + 250);
+  translate(x + 575 / 2, y + 250);
   scale(zoom.value() / 100);
   // draw grid lines
+
+  liner.m = inputs.liner.m.value();
+  liner.b = inputs.liner.b.value();
+
+  if (inputs.quadratic.a.value() != 0) {
+    quadratic.a = inputs.quadratic.a.value();
+  }
+  quadratic.b = inputs.quadratic.b.value();
+  quadratic.c = inputs.quadratic.c.value();
+
   let increment;
   if (zoom.value() < 75) { increment = 2; } else { increment = 1; }
   stroke(50);
-  for (let i = -1000; i < 1000; i += 25 * increment) {
-    line(i, 1000, i, -1000);
-    line(1000, i, -1000, i);
+  for (let i = -5000; i < 5000; i += 25 * increment) {
+    line(i, 5000, i, -5000);
+    line(5000, i, -5000, i);
   }
   // grid arrows
   strokeWeight((100 / zoom.value() * 2.5));
-  line(0, -1000, 0, 1000);
-  line(-1000, 0, 1000, 0);
+  line(0, -5000, 0, 5000);
+  line(-5000, 0, 5000, 0);
 
   // line
   strokeWeight((100 / zoom.value() * 5));
   stroke(75, 200, 75);
-  line(-1000, -(liner.m * -1000 + liner.b * 25), 1000, -(liner.m * 1000 + liner.b * 25));
+  line(-5000, -(liner.m * -5000 + liner.b * 25), 5000, -(liner.m * 5000 + liner.b * 25));
 
   // quadratic
   noFill();
   stroke(0, 0, 255);
   beginShape();
-  for (let x = (100 / zoom.value() * -1000); x < (100 / zoom.value() * 1000); x += 1.5) {
+  for (let x = (100 / zoom.value() * -5000); x < (100 / zoom.value() * 5000); x += 1.5) {
 
     vertex(x * 5, -(quadratic.a * x * x + quadratic.b * x + quadratic.c * 25));
   }
@@ -73,29 +88,38 @@ function draw() {
   textSize(100 / zoom.value() * 12);
   textAlign(CENTER, CENTER);
   stroke(0);
-  for (let i = -40; i < 41; i += increment) {
-    text(i, i * 25 - (100 / zoom.value() * 5), 0);
+  for (let i = -200; i < 201; i += increment) {
+    text(i, i * 25 - 5, 5);
     if (i != 0) {
-      text(i, 0, i * 25 + (100 / zoom.value() * 15));
+      text(i, -5, -((i - 1) * 25 + 15));
     }
   }
 
   // overlay UI
   scale(100 / zoom.value());
   strokeWeight(1);
-  translate(-x - 250, -y - 250);
+  translate(-x - 575 / 2, -y - 250);
   fill(175);
-  rect(0, 500, 500, 75);
+  rect(0, 500, windowWidth, 75);
   fill(0);
   textSize(15);
   textStyle(BOLD);
   textAlign(LEFT);
+  if (inputs.solver.selected() != 'Roots of a parabola') {
+    text("f(x) =              x + ", 60, 540);
+    inputs.liner.m.position(110, 537);
+    inputs.liner.b.position(190, 537);
+  } else {
+    inputs.liner.m.position(0, -100);
+    inputs.liner.b.position(0, -100);
+  }
+
   text("Zoom: " + zoom.value() + "%", 10, 517);
-  text("f(x) = x + ", 10, 540);
+  text("type:", 300, 517);
 }
 
 function mouseDragged() {
-  if (!(mouseX > 0 && mouseX < 500 && mouseY > 0 && mouseY < 500)) { draggable = false; }
+  if (!(mouseX > 0 && mouseX < 575 && mouseY > 0 && mouseY < 500)) { draggable = false; }
   if (draggable) {
     x += movedX;
     y += movedY;
