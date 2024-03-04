@@ -3,6 +3,8 @@ let y = 0;
 let zoom;
 let inputs;
 let draggable = true;
+let fixedWindowWidth;
+let fixedWindowHeight;
 
 liner = {
   m: 1,
@@ -23,7 +25,9 @@ Circle = {
 
 function setup() {
   createCanvas(windowWidth, windowHeight * 0.99);
-  if (windowWidth < 600 || windowHeight * 0.99 < 600) {
+  fixedWindowWidth = windowWidth;
+  fixedWindowHeight = windowHeight;
+  if (fixedWindowWidth < 600 || fixedWindowWidth * 0.99 < 600) {
     alert("Your screen is too small.\nPress Ctrl + - to make it bigger then reload this page otherwise this program will not be able to work properly.\n please keep in mind that this may decalibrated the movement system.");
   }
   zoom = createSlider(50, 200, 100);
@@ -55,7 +59,7 @@ function setup() {
 
 function draw() {
   background(225);
-  translate(x + windowWidth / 2, y + 250);
+  translate(x + fixedWindowWidth / 2, y + 250);
   scale(zoom.value() / 100);
   // draw grid lines
 
@@ -77,21 +81,21 @@ function draw() {
   let increment;
   if (zoom.value() < 75) { increment = 2; } else { increment = 1; }
   stroke(50);
-  for (let i = -5000; i < 5000; i += 25 * increment) {
-    line(i, 5000, i, -5000);
-    line(5000, i, -5000, i);
+  for (let i = -2000; i < 2000; i += 25 * increment) {
+    line(i, 2000, i, -2000);
+    line(2000, i, -2000, i);
   }
   // grid arrows
   strokeWeight((100 / zoom.value() * 2.5));
-  line(0, -5000, 0, 5000);
-  line(-5000, 0, 5000, 0);
+  line(0, -2000, 0, 2000);
+  line(-2000, 0, 2000, 0);
 
   strokeWeight((100 / zoom.value() * 5));
 
   // line
   if (inputs.solver.selected() != 'Roots of a parabola') {
     stroke(75, 200, 75);
-    line(-5000, -(liner.m * -5000 + liner.b * 25), 5000, -(liner.m * 5000 + liner.b * 25));
+    line(-2000, -(liner.m * -2000 + liner.b * 25), 2000, -(liner.m * 2000 + liner.b * 25));
   }
 
   // quadratic
@@ -99,7 +103,7 @@ function draw() {
     noFill();
     stroke(0, 0, 255);
     beginShape();
-    for (let x = (100 / zoom.value() * -5000); x < (100 / zoom.value() * 5000); x += 0.5) {
+    for (let x = -2000; x < 2000; x += 0.5) {
 
       vertex(x * 5, -(quadratic.a * x * x + quadratic.b * x + quadratic.c * 25));
     }
@@ -110,7 +114,7 @@ function draw() {
   if (inputs.solver.selected() == 'Circle intercepting with a line') {
     noFill();
     stroke(255, 0, 0);
-    circle(-Circle.h * 25, -Circle.k * 25, Circle.r * 50);
+    circle(-Circle.h * 25, Circle.k * 25, Circle.r * 50);
   }
 
   // scale
@@ -132,23 +136,34 @@ function draw() {
     points = parabolaInterceptWithLine(quadratic, liner);
     fill(232, 165, 9);
     noStroke();
-    for (i = 0; i < points.length; i++) {
-      ellipse(points[i].x * 25, -points[i].y * 25, 7, 7);
-    }
   }
   if (inputs.solver.selected() == 'Roots of a parabola') {
-    // TODO
+    points = parabolaInterceptWithLine(quadratic, { m: 0, b: 0 });
+    fill(232, 165, 9);
+    noStroke();
   }
   if (inputs.solver.selected() == 'Circle intercepting with a line') {
-    // TODO
+    Circle = { h: int(Circle.h), k: int(Circle.k), r: int(Circle.r) };
+    liner = { m: int(liner.m), b: int(liner.b) };
+    quad = {
+      a: 1 + pow(liner.m, 2),
+      b: 2 * Circle.h + 2 * (liner.m * (Circle.k + liner.b)) + liner.m,
+      c: pow(Circle.h, 2) + pow(Circle.k + liner.b, 2) - pow(Circle.r, 2) + liner.b
+    };
+    points = parabolaInterceptWithLine(quad, liner);
+    fill(232, 165, 9);
+    noStroke();
+  }
+  for (i = 0; i < points.length; i++) {
+    ellipse(points[i].x * 25, -points[i].y * 25, 7, 7);
   }
 
   // overlay UI
   scale(100 / zoom.value());
   strokeWeight(1);
-  translate(-x - windowWidth / 2, -y - 250);
+  translate(-x - fixedWindowWidth / 2, -y - 250);
   fill(175);
-  rect(0, 500, windowWidth, windowHeight);
+  rect(0, 500, fixedWindowWidth, fixedWindowHeight);
   fill(0);
   textSize(15);
   textStyle(BOLD);
@@ -157,7 +172,7 @@ function draw() {
   //input fields
   if (inputs.solver.selected() != 'Roots of a parabola') {
     text("f(x) =              x  + ", 60, 540);
-    inputs.liner.m.position(100, 530);
+    inputs.liner.m.position(108, 530);
     inputs.liner.b.position(185, 530);
   } else {
     inputs.liner.m.position(0, -100);
@@ -165,10 +180,10 @@ function draw() {
   }
 
   if (inputs.solver.selected() == 'Circle intercepting with a line') {
-    text("c(x) = ( x -              )² +  (y -              )² =             ²", 60, 563);
+    text("c(x) = ( x +             )² +  (y +             )² =            ²", 60, 563);
     inputs.circle.h.position(140, 555);
-    inputs.circle.k.position(250, 555);
-    inputs.circle.r.position(330, 555);
+    inputs.circle.k.position(252, 555);
+    inputs.circle.r.position(328, 555);
   } else {
     inputs.circle.h.position(0, -100);
     inputs.circle.k.position(0, -100);
@@ -176,15 +191,15 @@ function draw() {
   }
 
   if (inputs.solver.selected() == 'Parabola intercepting with a line') {
-    text("g(x) =              x² +              x +", 57, 563);
-    inputs.quadratic.a.position(100, 553);
+    text("g(x) =              x² +            x +", 57, 563);
+    inputs.quadratic.a.position(108, 553);
     inputs.quadratic.b.position(185, 553);
-    inputs.quadratic.c.position(265, 553);
+    inputs.quadratic.c.position(255, 553);
   } else if (inputs.solver.selected() == 'Roots of a parabola') {
-    text("g(x) =              x² +              x +", 57, 540);
-    inputs.quadratic.a.position(100, 530);
+    text("g(x) =              x² +            x +", 57, 540);
+    inputs.quadratic.a.position(108, 530);
     inputs.quadratic.b.position(185, 530);
-    inputs.quadratic.c.position(265, 530);
+    inputs.quadratic.c.position(255, 530);
   } else {
     inputs.quadratic.a.position(0, -100);
     inputs.quadratic.b.position(0, -100);
@@ -193,11 +208,12 @@ function draw() {
 
   text("Zoom: " + zoom.value() + "%", 10, 517);
   text("Type:", 300, 517);
-  text(pointsToString(points), 65, 585);
+  textAlign(CENTER);
+  text(pointsToString(points), fixedWindowWidth / 2, 585);
 }
 
 function mouseDragged() {
-  if (!(mouseY > 0 && mouseY < 500)) { draggable = false; }
+  if (!(mouseY < 500)) { draggable = false; }
   if (draggable) {
     x += movedX;
     y += movedY;
@@ -209,14 +225,18 @@ function mouseReleased() {
 }
 
 function pointsToString(points) {
+  let keyword = "intercept";
+  if (inputs.solver.selected() == 'Roots of a parabola') {
+    keyword = "root";
+  }
   if (points.length == 0) {
-    return "There are no intercepts";
+    return "There are no " + keyword + "s";
   }
   if (points.length == 1) {
-    return "There is one intercept at (" + points[0].x + ", " + points[0].y + ")";
+    return "There is one " + keyword + " at (" + points[0].x + ", " + points[0].y + ")";
   }
   if (points.length == 2) {
-    return "There are two intercepts at (" + points[0].x + ", " + points[0].y + ") and (" + points[1].x + ", " + points[1].y + ")";
+    return "There are two " + keyword + "s at (" + points[0].x + ", " + points[0].y + ") and (" + points[1].x + ", " + points[1].y + ")";
   }
 }
 
@@ -225,26 +245,24 @@ function parabolaInterceptWithLine(Parabola, Line) {
   let a = Parabola.a;
   let b = Parabola.b - Line.m;
   let c = Parabola.c - Line.b;
-  let discriminant = (b * b) - (4 * a * c);
-  discriminant = Math.floor(discriminant * 10000) / 10000;
+  let discriminant = pow(b, 2) - (4 * a * c);
+  discriminant = Math.floor(discriminant * 1000) / 1000;
+  if (discriminant < 0) { return []; }
 
+  // POI #1
+  let x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+  x1 = Math.floor(x1 * 1000) / 1000;
+  let y1 = Line.m * x1 + Line.b;
+  y1 = Math.floor(y1 * 1000) / 1000;
   if (discriminant == 0) {
-    let x = (-b + Math.sqrt(discriminant)) / (2 * a);
-    x = Math.floor(x * 10000) / 10000;
-    let y = Line.m * x + Line.b;
-    return [{ x: x, y: y }];
+    return [{ x: x1, y: y1 }];
   }
   if (discriminant > 0) {
-    // POI #1
-    let x1 = (-b + Math.sqrt(discriminant) ) / (2 * a);
-    x1 = Math.floor(x1 * 10000) / 10000;
-    let y1 = Line.m * x1 + Line.b;
     // POI #2
-    let x2 = (-b - Math.sqrt(discriminant) ) / (2 * a);
-    x2 = Math.floor(x2 * 10000) / 10000;
+    let x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+    x2 = Math.floor(x2 * 1000) / 1000;
     let y2 = Line.m * x2 + Line.b;
+    y2 = Math.floor(y2 * 1000) / 1000;
     return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
   }
-  // discriminant is less than zero
-  return [];
 }
