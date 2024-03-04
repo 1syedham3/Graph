@@ -54,6 +54,7 @@ function setup() {
   inputs.solver.option('Parabola intercepting with a line (BETA)');
   inputs.solver.option('Roots of a parabola (BETA)');
   inputs.solver.option('Circle intercepting with a line');
+  inputs.solver.selected('Circle intercepting with a line');
   inputs.solver.position(345, 508)
 }
 
