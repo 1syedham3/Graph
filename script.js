@@ -127,6 +127,7 @@ function draw() {
   }
 
   // intersepts
+  var points;
   if (inputs.solver.selected() == 'Parabola intercepting with a line') {
     points = parabolaInterceptWithLine(quadratic, liner);
     fill(232, 165, 9);
@@ -220,26 +221,27 @@ function pointsToString(points) {
 }
 
 function parabolaInterceptWithLine(Parabola, Line) {
+  Line = { m: int(Line.m), b: int(Line.b) };
   let a = Parabola.a;
   let b = Parabola.b - Line.m;
   let c = Parabola.c - Line.b;
   let discriminant = (b * b) - (4 * a * c);
-  discriminant = Math.floor(discriminant * 1000) / 1000;
+  discriminant = Math.floor(discriminant * 10000) / 10000;
 
   if (discriminant == 0) {
-    let x = (-b + Math.sqrt(discriminant) ) / (2 * a);
-    x = Math.floor(x * 1000) / 1000;
+    let x = (-b + Math.sqrt(discriminant)) / (2 * a);
+    x = Math.floor(x * 10000) / 10000;
     let y = Line.m * x + Line.b;
     return [{ x: x, y: y }];
   }
   if (discriminant > 0) {
     // POI #1
-    let x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
-    x1 = Math.floor(x1 * 1000) / 1000;
+    let x1 = (-b + Math.sqrt(discriminant) ) / (2 * a);
+    x1 = Math.floor(x1 * 10000) / 10000;
     let y1 = Line.m * x1 + Line.b;
     // POI #2
-    let x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-    x2 = Math.floor(x1 * 1000) / 1000;
+    let x2 = (-b - Math.sqrt(discriminant) ) / (2 * a);
+    x2 = Math.floor(x2 * 10000) / 10000;
     let y2 = Line.m * x2 + Line.b;
     return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
   }
