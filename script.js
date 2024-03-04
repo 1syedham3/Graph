@@ -51,8 +51,8 @@ function setup() {
     },
     solver: createSelect()
   }
-  inputs.solver.option('Parabola intercepting with a line');
-  inputs.solver.option('Roots of a parabola');
+  inputs.solver.option('Parabola intercepting with a line (BETA))');
+  inputs.solver.option('Roots of a parabola (BETA)');
   inputs.solver.option('Circle intercepting with a line');
   inputs.solver.position(345, 508)
 }
@@ -93,7 +93,7 @@ function draw() {
   strokeWeight((100 / zoom.value() * 5));
 
   // line
-  if (inputs.solver.selected() != 'Roots of a parabola') {
+  if (inputs.solver.selected() != 'Roots of a parabola (BETA)') {
     stroke(75, 200, 75);
     line(-2000, -(liner.m * -2000 + liner.b * 25), 2000, -(liner.m * 2000 + liner.b * 25));
   }
@@ -132,12 +132,12 @@ function draw() {
 
   // intersepts
   var points;
-  if (inputs.solver.selected() == 'Parabola intercepting with a line') {
+  if (inputs.solver.selected() == 'Parabola intercepting with a line (BETA))') {
     points = parabolaInterceptWithLine(quadratic, liner);
     fill(232, 165, 9);
     noStroke();
   }
-  if (inputs.solver.selected() == 'Roots of a parabola') {
+  if (inputs.solver.selected() == 'Roots of a parabola (BETA)') {
     points = parabolaInterceptWithLine(quadratic, { m: 0, b: 0 });
     fill(232, 165, 9);
     noStroke();
@@ -170,7 +170,7 @@ function draw() {
   textAlign(LEFT);
 
   //input fields
-  if (inputs.solver.selected() != 'Roots of a parabola') {
+  if (inputs.solver.selected() != 'Roots of a parabola (BETA)') {
     text("f(x) =              x  + ", 60, 540);
     inputs.liner.m.position(108, 530);
     inputs.liner.b.position(185, 530);
@@ -190,12 +190,12 @@ function draw() {
     inputs.circle.r.position(0, -100);
   }
 
-  if (inputs.solver.selected() == 'Parabola intercepting with a line') {
+  if (inputs.solver.selected() == 'Parabola intercepting with a line (BETA))') {
     text("g(x) =              x² +            x +", 57, 563);
     inputs.quadratic.a.position(108, 553);
     inputs.quadratic.b.position(185, 553);
     inputs.quadratic.c.position(255, 553);
-  } else if (inputs.solver.selected() == 'Roots of a parabola') {
+  } else if (inputs.solver.selected() == 'Roots of a parabola (BETA)') {
     text("g(x) =              x² +            x +", 57, 540);
     inputs.quadratic.a.position(108, 530);
     inputs.quadratic.b.position(185, 530);
@@ -226,7 +226,7 @@ function mouseReleased() {
 
 function pointsToString(points) {
   let keyword = "intercept";
-  if (inputs.solver.selected() == 'Roots of a parabola') {
+  if (inputs.solver.selected() == 'Roots of a parabola (BETA)') {
     keyword = "root";
   }
   if (points.length == 0) {
