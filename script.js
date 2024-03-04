@@ -23,6 +23,9 @@ Circle = {
 
 function setup() {
   createCanvas(windowWidth, windowHeight * 0.99);
+  if (windowWidth < 600 || windowHeight * 0.99 < 600) {
+    alert("Your screen is too small.\nPress Ctrl + - to make it bigger then reload this page otherwise this program will not be able to work properly.\n please keep in mind that this may decalibrated the movement system.");
+  }
   zoom = createSlider(50, 200, 100);
   zoom.position(120, 510);
   zoom.size(150);
@@ -44,10 +47,9 @@ function setup() {
     },
     solver: createSelect()
   }
-  inputs.solver.option('Roots of a parabola');
   inputs.solver.option('Parabola intercepting with a line');
+  inputs.solver.option('Roots of a parabola');
   inputs.solver.option('Circle intercepting with a line');
-  inputs.solver.selected('Parabola intercepting with a line');
   inputs.solver.position(345, 508)
 }
 
@@ -97,7 +99,7 @@ function draw() {
     noFill();
     stroke(0, 0, 255);
     beginShape();
-    for (let x = (100 / zoom.value() * -5000); x < (100 / zoom.value() * 5000); x += 1.5) {
+    for (let x = (100 / zoom.value() * -5000); x < (100 / zoom.value() * 5000); x += 0.5) {
 
       vertex(x * 5, -(quadratic.a * x * x + quadratic.b * x + quadratic.c * 25));
     }
@@ -122,6 +124,22 @@ function draw() {
     if (i != 0) {
       text(i, -5, -((i - 1) * 25 + 15));
     }
+  }
+
+  // intersepts
+  if (inputs.solver.selected() == 'Parabola intercepting with a line') {
+    points = parabolaInterceptWithLine(quadratic, liner);
+    fill(232, 165, 9);
+    noStroke();
+    for (i = 0; i < points.length; i++) {
+      ellipse(points[i].x * 25, -points[i].y * 25, 7, 7);
+    }
+  }
+  if (inputs.solver.selected() == 'Roots of a parabola') {
+    // TODO
+  }
+  if (inputs.solver.selected() == 'Circle intercepting with a line') {
+    // TODO
   }
 
   // overlay UI
@@ -173,7 +191,8 @@ function draw() {
   }
 
   text("Zoom: " + zoom.value() + "%", 10, 517);
-  text("type:", 300, 517);
+  text("Type:", 300, 517);
+  text(pointsToString(points), 65, 585);
 }
 
 function mouseDragged() {
@@ -186,4 +205,44 @@ function mouseDragged() {
 
 function mouseReleased() {
   draggable = true;
+}
+
+function pointsToString(points) {
+  if (points.length == 0) {
+    return "There are no intercepts";
+  }
+  if (points.length == 1) {
+    return "There is one intercept at (" + points[0].x + ", " + points[0].y + ")";
+  }
+  if (points.length == 2) {
+    return "There are two intercepts at (" + points[0].x + ", " + points[0].y + ") and (" + points[1].x + ", " + points[1].y + ")";
+  }
+}
+
+function parabolaInterceptWithLine(Parabola, Line) {
+  let a = Parabola.a;
+  let b = Parabola.b - Line.m;
+  let c = Parabola.c - Line.b;
+  let discriminant = (b * b) - (4 * a * c);
+  discriminant = Math.floor(discriminant * 1000) / 1000;
+
+  if (discriminant == 0) {
+    let x = (-b + Math.sqrt(discriminant) ) / (2 * a);
+    x = Math.floor(x * 1000) / 1000;
+    let y = Line.m * x + Line.b;
+    return [{ x: x, y: y }];
+  }
+  if (discriminant > 0) {
+    // POI #1
+    let x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+    x1 = Math.floor(x1 * 1000) / 1000;
+    let y1 = Line.m * x1 + Line.b;
+    // POI #2
+    let x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+    x2 = Math.floor(x1 * 1000) / 1000;
+    let y2 = Line.m * x2 + Line.b;
+    return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
+  }
+  // discriminant is less than zero
+  return [];
 }
