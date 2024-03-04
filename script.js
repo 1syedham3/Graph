@@ -51,7 +51,7 @@ function setup() {
     },
     solver: createSelect()
   }
-  inputs.solver.option('Parabola intercepting with a line (BETA))');
+  inputs.solver.option('Parabola intercepting with a line (BETA)');
   inputs.solver.option('Roots of a parabola (BETA)');
   inputs.solver.option('Circle intercepting with a line');
   inputs.solver.position(345, 508)
@@ -63,8 +63,12 @@ function draw() {
   scale(zoom.value() / 100);
   // draw grid lines
 
-  liner.m = inputs.liner.m.value();
-  liner.b = inputs.liner.b.value();
+  if (inputs.liner.m.value() != "") {
+    liner.m = inputs.liner.m.value();
+  }
+  if (inputs.liner.b.value() != 0) {
+    liner.b = inputs.liner.b.value();
+  }
 
   if (inputs.quadratic.a.value() != 0) {
     quadratic.a = inputs.quadratic.a.value();
@@ -132,7 +136,7 @@ function draw() {
 
   // intersepts
   var points;
-  if (inputs.solver.selected() == 'Parabola intercepting with a line (BETA))') {
+  if (inputs.solver.selected() == 'Parabola intercepting with a line (BETA)') {
     points = parabolaInterceptWithLine(quadratic, liner);
     fill(232, 165, 9);
     noStroke();
@@ -190,7 +194,7 @@ function draw() {
     inputs.circle.r.position(0, -100);
   }
 
-  if (inputs.solver.selected() == 'Parabola intercepting with a line (BETA))') {
+  if (inputs.solver.selected() == 'Parabola intercepting with a line (BETA)') {
     text("g(x) =              x² +            x +", 57, 563);
     inputs.quadratic.a.position(108, 553);
     inputs.quadratic.b.position(185, 553);
